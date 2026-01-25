@@ -1,17 +1,18 @@
 import os
+import io
 import cv2
 import uuid
 import numpy as np
+import base64
+from dotenv import load_dotenv
+from fastapi.responses import StreamingResponse
 from face_processing import detect_and_crop
 from fastapi import FastAPI, File, UploadFile
-from replicate.client import Client
-from dotenv import load_dotenv
 from validations.validateUpload import validate_upload
-
-load_dotenv()
+from replicateAPI import upscale_image, remove_background
+import requests
 
 app = FastAPI()
-
 
 
 @app.get("/")
@@ -29,10 +30,19 @@ async def create_upload_file(file: UploadFile = File(...)):
         contents = await file.read()
         with open(valid["file_path"], "wb") as f:
             f.write(contents)
-        await file.seek(0)  # Reset for processing
+        await file.seek(0)  # Reset for processing    
         
+        
+        # Encode image as base64 data URL for raw upload
+        image_data_url = f"data:image/jpeg;base64,{base64.b64encode(contents).decode('utf-8')}"
+        upscale_images = await upscale_image(image=image_data_url)
+        # bg_removed_image =await remove_background(image=upscale_images)
+        print("Upscaled image URL:", upscale_images)
+
         # Read and process the image
-        data = await file.read()
+
+        response = requests.get(upscale_images)
+        data = response.content
         image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
         result = detect_and_crop(image, 144, 192)
         if result is None:
@@ -40,57 +50,18 @@ async def create_upload_file(file: UploadFile = File(...)):
         
         output_path = f"cropped_{uuid.uuid4().hex}.jpg"
         cv2.imwrite(output_path, result)
-        return {"message": "Image processed successfully", "output_path": output_path}
+
+        
+        _, buffer = cv2.imencode('.jpg', result)
+        
+        return StreamingResponse(
+            io.BytesIO(buffer.tobytes()),
+            media_type="image/jpeg",
+            headers={"Content-Disposition": f"attachment; filename={output_path}"}
+        )
+        # return {"message": "Image processed successfully", "output_path": output_path, "response": response}
     
     except Exception as e:
         return {"error": str(e)}
 
 
-# def save_image(image, base_dir="/"):
-#     os.makedirs(f"{base_dir}", exist_ok=True)
-
-#     filename = f"{uuid.uuid4().hex}.jpg"
-#     filepath = os.path.join(base_dir, filename)
-
-#     cv2.imwrite(filepath, image)
-#     return filepath
-
-# replicate = Client(
-#     api_token=os.getenv("REPLICATE_API_TOKEN")
-# )
-# output = replicate.run(
-#     "tencentarc/gfpgan:0fbacf7afc6c144e5be9767cff80f25aff23e52b0708f17e20f9879b2f21516c",
-#     input={
-#         "img": "https://i.ibb.co.com/hB5D2n7/background-5.png",
-#         "scale": 2,
-#         "version": "v1.4"
-#     }
-# )
-
-# # To access the file URL:
-# print(output.url)
-# #=> "http://example.com"
-
-# # To write the file to disk:
-# with open("my-image.png", "wb") as file:
-#     file.write(output.read())
-
-
-# output = replicate.run(
-#     "851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc",
-#     input={
-#         "image": "https://i.ibb.co.com/hB5D2n7/background-5.png",
-#         "format": "png",
-#         "reverse": False,
-#         "threshold": 0,
-#         "background_type": "red"
-#     }
-# )
-
-# # To access the file URL:
-# print(output.url)
-# #=> "http://example.com"
-
-# # To write the file to disk:
-# with open("my-image.png", "wb") as file:
-#     file.write(output.read())
