@@ -7,33 +7,41 @@ from fastapi import FastAPI, File, UploadFile
 from replicate.client import Client
 from dotenv import load_dotenv
 from validations.validateUpload import validate_upload
-load_dotenv()
 
+load_dotenv()
 
 app = FastAPI()
 
 
+
 @app.get("/")
 async def read_root():
-		return {"EasyEdit": "Let's enhance your images easily!"}
+    return {"EasyEdit": "Let's enhance your images easily!"}
 
-
-@app.post("/uploadfile/")
+@app.post("/upload/")
 async def create_upload_file(file: UploadFile = File(...)):
     try:
+        valid = await validate_upload(file)
+        if not valid["status"]:
+            return {"error": valid["message"]}
+        
+        # Save the uploaded file
+        contents = await file.read()
+        with open(valid["file_path"], "wb") as f:
+            f.write(contents)
+        await file.seek(0)  # Reset for processing
+        
+        # Read and process the image
         data = await file.read()
         image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
-
-        if image is None:
-            return {"error": "Invalid image file"}
-
-        result = detect_and_crop(image, 256, 256)
-        print("Result type:", type(result))
+        result = detect_and_crop(image, 144, 192)
         if result is None:
             return {"error": "No face detected in the image"}
+        
         output_path = f"cropped_{uuid.uuid4().hex}.jpg"
         cv2.imwrite(output_path, result)
-
+        return {"message": "Image processed successfully", "output_path": output_path}
+    
     except Exception as e:
         return {"error": str(e)}
 

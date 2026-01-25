@@ -5,7 +5,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 # -----------------------------
-# Load Face Landmarker (ONCE)
+# Load Face Landmarker Model
 # -----------------------------
 base_options = python.BaseOptions(
 	model_asset_path="models/face_landmarker.task"
@@ -22,9 +22,10 @@ landmarker = vision.FaceLandmarker.create_from_options(options)
 
 
 # -----------------------------
-# Detect landmarks (NEW API)
+# Detect landmarks
 # -----------------------------
 def detect_landmarks(image: np.ndarray):
+
 	mp_image = mp.Image(
 		image_format=mp.ImageFormat.SRGB,
 		data=cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
@@ -87,7 +88,7 @@ def crop_face(image, eye_center, chin, out_w, out_h):
 # Resize
 # -----------------------------
 def resize_image(image, width, height):
-    return cv2.resize(image, (width, height), interpolation=cv2.INTER_CUBIC)
+    return cv2.resize(image, (width, height), interpolation=cv2.INTER_LINEAR)
 
 
 # -----------------------------
