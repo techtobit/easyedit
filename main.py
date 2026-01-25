@@ -1,5 +1,8 @@
 import os
-import replicate
+import cv2
+import uuid
+import numpy as np
+from face_processing import detect_and_crop
 from fastapi import FastAPI, File, UploadFile
 from replicate.client import Client
 from dotenv import load_dotenv
@@ -18,10 +21,31 @@ async def read_root():
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
     try:
-        file_location = await validate_upload(file)
-        return {"filename": file.filename, "location": file_location}
-    except ValueError as ve:
-        return {"error": str(ve)}
+        data = await file.read()
+        image = cv2.imdecode(np.frombuffer(data, np.uint8), cv2.IMREAD_COLOR)
+
+        if image is None:
+            return {"error": "Invalid image file"}
+
+        result = detect_and_crop(image, 256, 256)
+        print("Result type:", type(result))
+        if result is None:
+            return {"error": "No face detected in the image"}
+        output_path = f"cropped_{uuid.uuid4().hex}.jpg"
+        cv2.imwrite(output_path, result)
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# def save_image(image, base_dir="/"):
+#     os.makedirs(f"{base_dir}", exist_ok=True)
+
+#     filename = f"{uuid.uuid4().hex}.jpg"
+#     filepath = os.path.join(base_dir, filename)
+
+#     cv2.imwrite(filepath, image)
+#     return filepath
 
 # replicate = Client(
 #     api_token=os.getenv("REPLICATE_API_TOKEN")
