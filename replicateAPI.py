@@ -21,20 +21,18 @@ def remove_background(image_path):
 			"image": uploaded.urls["get"],
 		}
 	)
-	responses = requests.get(remove_bg.url)
-	return responses.content
+	print('remove_bg', remove_bg.url)
+	return remove_bg.url
 
 
-def upscale_image(image):
-	print('image', image)
-	with open(image, "rb") as img_file:
-		outputs = replicate.run(
+def upscale_image(removed_bg_url: str):
+	outputs = replicate.run(
 		"tencentarc/gfpgan:ae80bbe1adce7d616b8a96ba88a91d3556838d4f2f4da76327638b8e95ea4694",
 		input={
-		"img": img_file,
+		"img": removed_bg_url,
 		"scale": 2,
 		"version": "v1.3"
 		}
 	)
-	print('outputs', outputs)
+	print('outputs', outputs.url)
 	return outputs.url
