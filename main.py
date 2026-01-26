@@ -37,25 +37,22 @@ async def create_upload_file(file: UploadFile = File(...)):
         if croped_img is None:
             return {"error": "No face detected in the image. Minimize the face size or try another image."}
 
+        # Save cropped image to a temporary file
         tmp_croped_img= tempfile.NamedTemporaryFile(
             suffix=suffix, delete=False
         )
         cv2.imwrite(tmp_croped_img.name, croped_img)
         
         #remove background
-        bg_removed_bytes = remove_background(tmp_croped_img.name)
-        
-        # Save bg removed to temp file for upscaling
-        tmp_bg_removed = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
-        cv2.imwrite(tmp_bg_removed.name, cv2.imdecode(np.frombuffer(bg_removed_bytes, np.uint8), cv2.IMREAD_UNCHANGED))
-        
-        #upscale image
-        upscaled_url = upscale_image(tmp_bg_removed.name)
-        print('upscaled_url', upscaled_url)
+        bg_removed = remove_background(tmp_croped_img.name)
+        print('main:bg_removed', bg_removed)
+
+        # Upscale image
+        upscaled_url = upscale_image(bg_removed)
+        print('main:upscaled_url', upscaled_url)
         
         # Clean up temp files
         os.unlink(tmp_croped_img.name)
-        os.unlink(tmp_bg_removed.name)
 
         # Return the URL to the frontend
         return {"image_url": upscaled_url}
