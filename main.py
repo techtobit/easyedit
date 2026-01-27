@@ -6,11 +6,14 @@ import base64
 import requests
 import tempfile
 import numpy as np
+from sqlalchemy.ext.asyncio import AsyncSession
+from utils.viewLog import logger
+from core.data_insert import create_log
 from face_processing import detect_and_crop
-from fastapi import FastAPI, File, UploadFile
+from core.database import engine, Base, get_db
+from fastapi import FastAPI, File, UploadFile, Depends
 from fastapi.responses import StreamingResponse
 from utils.validateUpload import validate_upload
-from utils.viewLog import logger
 from replicateAPI import remove_background, upscale_image
 
 app = FastAPI()
@@ -20,13 +23,15 @@ async def read_root():
     return {"EasyEdit": "Let's enhance your images easily!"}
 
 
-
 @app.post("/upload/")
 async def create_upload_file(
         file: UploadFile = File(...),
         input_width: int = File(...),
-        input_height: int = File(...)):
+        input_height: int = File(...),
+        db: AsyncSession = Depends(get_db)):
     try:
+
+
         valid = await validate_upload(file)
         if not valid["status"]:
             return {"error": valid["message"]}
@@ -56,6 +61,7 @@ async def create_upload_file(
             logger.info(f"Image upscaled, URL: {upscaled_url}")
             # Clean up temp files
             os.unlink(tmp_croped_img)
+
         else:
             bytes_image = await image_convertion(contents)
             tmp_croped_img= await temp_save(bytes_image)
@@ -65,10 +71,17 @@ async def create_upload_file(
             logger.info(f"Image upscaled, URL: {upscaled_url}")
             os.unlink(tmp_croped_img)
 
+        #Save to db
+        await create_log(
+            db=db,
+            user_id=1,
+            processing_time=0.0,
+            status="success",
+            processed_img=upscaled_url,
+        )
         # Return the URL to the frontend
         return {"image_url": upscaled_url}
         logger.info("Process completed successfully.")
-        return None
     
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
@@ -83,4 +96,12 @@ async def temp_save(image):
     tmp_img= tempfile.NamedTemporaryFile(suffix='.png', delete=False)
     cv2.imwrite(tmp_img.name, image)
     return tmp_img.name
+
+
+
+
+@app.on_event("startup")
+async def startup():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
