@@ -11,7 +11,7 @@ client = replicate = Client(
     api_token=os.getenv("REPLICATE_API_TOKEN")
 )
 
-def remove_background(image_path):
+async def remove_background(image_path):
 	uploaded = client.files.create(
     file=open(image_path, "rb"),
 	)
@@ -21,11 +21,10 @@ def remove_background(image_path):
 			"image": uploaded.urls["get"],
 		}
 	)
-	print('remove_bg', remove_bg.url)
 	return remove_bg.url
 
 
-def upscale_image(removed_bg_url: str):
+async def upscale_image(removed_bg_url: str):
 	outputs = replicate.run(
 		"tencentarc/gfpgan:ae80bbe1adce7d616b8a96ba88a91d3556838d4f2f4da76327638b8e95ea4694",
 		input={
@@ -34,5 +33,7 @@ def upscale_image(removed_bg_url: str):
 		"version": "v1.3"
 		}
 	)
-	print('outputs', outputs.url)
 	return outputs.url
+
+
+	
