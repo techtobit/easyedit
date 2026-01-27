@@ -14,7 +14,6 @@ from replicateAPI import remove_background, upscale_image
 
 app = FastAPI()
 
-
 @app.get("/")
 async def read_root():
     return {"EasyEdit": "Let's enhance your images easily!"}
@@ -30,12 +29,16 @@ async def create_upload_file(file: UploadFile = File(...)):
         contents = await file.read()
         suffix = os.path.splitext(file.filename)[1].lower() or ".jpg"
         
-        image = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
+        # Save the uploaded image
+        with open(valid["file_path"], "wb") as save_uploaded_image:
+            save_uploaded_image.write(contents)
+
+        bytes_to_image = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
 
         # Process the image: detect and crop face
-        croped_img = detect_and_crop(image, 144, 192)
+        croped_img = detect_and_crop(bytes_to_image, 144, 192)
         if croped_img is None:
-            return {"error": "No face detected in the image. Minimize the face size or try another image."}
+            return {"error": "No face detected in the image. Maximize the face size or try another image."}
 
         # Save cropped image to a temporary file
         tmp_croped_img= tempfile.NamedTemporaryFile(
@@ -44,18 +47,19 @@ async def create_upload_file(file: UploadFile = File(...)):
         cv2.imwrite(tmp_croped_img.name, croped_img)
         
         #remove background
-        bg_removed = remove_background(tmp_croped_img.name)
-        print('main:bg_removed', bg_removed)
+        # bg_removed = remove_background(tmp_croped_img.name)
+        # print('main:bg_removed', bg_removed)
 
-        # Upscale image
-        upscaled_url = upscale_image(bg_removed)
-        print('main:upscaled_url', upscaled_url)
+        # # Upscale image
+        # upscaled_url = upscale_image(bg_removed)
+        # print('main:upscaled_url', upscaled_url)
         
         # Clean up temp files
         os.unlink(tmp_croped_img.name)
 
         # Return the URL to the frontend
-        return {"image_url": upscaled_url}
+        # return {"image_url": upscaled_url}
+        return None
     
     except Exception as e:
         return {"error": str(e)}
