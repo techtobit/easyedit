@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.processing_log import ProcessingLog
+from database.processing_log import ProcessingLog
 
 async def create_log(
     db: AsyncSession,
