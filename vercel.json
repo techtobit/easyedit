@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt",
+  "buildCommand": "pip install --upgrade pip setuptools wheel && pip install --only-binary :all: --no-cache-dir -r requirements.txt",
   "outputDirectory": ".",
   "env": {
     "PYTHONUNBUFFERED": "1"
