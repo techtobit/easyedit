@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.sql import func
-from core.database import Base
+from database.database import Base
 
 class ProcessingLog(Base):
     __tablename__ = "processing_logs"

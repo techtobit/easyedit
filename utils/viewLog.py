@@ -1,8 +1,8 @@
 import logging
 from rich.logging import RichHandler
 
-file_handler = logging.FileHandler("easyedit.log")
-file_handler.setLevel(logging.INFO)
+# file_handler = logging.FileHandler("easyedit.log")
+# file_handler.setLevel(logging.INFO)
 
 logging.basicConfig(
 		level=logging.INFO,

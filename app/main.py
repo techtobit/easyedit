@@ -6,14 +6,13 @@ import tempfile
 import numpy as np
 from fastapi import Request
 from utils.viewLog import logger
+from database.data_insert import create_log
+from app.face_processing import detect_and_crop
 from sqlalchemy.ext.asyncio import AsyncSession
-from core.data_insert import create_log
-from face_processing import detect_and_crop
-from core.database import engine, Base, get_db
-from fastapi import FastAPI, File, UploadFile, Depends
-from fastapi.responses import StreamingResponse
 from utils.validateUpload import validate_upload
-from replicateAPI import remove_background, upscale_image
+from database.database import engine, Base, get_db
+from fastapi import FastAPI, File, UploadFile, Depends
+from app.replicateAPI import remove_background, upscale_image
 
 app = FastAPI()
 
@@ -35,14 +34,11 @@ async def create_upload_file(
         
         valid = await validate_upload(file)
         if not valid["status"]:
-            return {"error": valid["message"]}
-    
-        # Read the uploaded file
-        contents = await file.read()   
+            return {"error": valid["message"]} 
 
         if input_width > 0 and input_height >0:
             # Process the image: detect and crop face
-            convert_img = await image_convertion(contents)
+            convert_img = await image_convertion(file)
             croped_img = await detect_and_crop(convert_img, input_width, input_height)
             if croped_img is None:
                 logger.error(f'No face detected in the image')
@@ -60,7 +56,7 @@ async def create_upload_file(
             os.unlink(tmp_croped_img)
 
         else:
-            bytes_image = await image_convertion(contents)
+            bytes_image = await image_convertion(file)
             tmp_croped_img= await temp_save(bytes_image)
             bg_removed = await remove_background(tmp_croped_img)
             logger.info(f"Background removed, URL: {bg_removed}")
@@ -81,7 +77,7 @@ async def create_upload_file(
             processed_img=upscaled_url,
         )
         # Return the URL to the frontend
-        logger.info("Process completed successfully within {total_processing_time} sceonds")
+        logger.info(f"Process completed successfully within {total_processing_time:.2f} seconds")
         return {"image_url": upscaled_url}
     
     except Exception as e:
@@ -89,7 +85,9 @@ async def create_upload_file(
         return {"error": str(e)}
 
 
-async def image_convertion(contents):
+async def image_convertion(file):
+    # Read the uploaded file
+    contents = await file.read()  
     bytes_to_image = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     return bytes_to_image
 
