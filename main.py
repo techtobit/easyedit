@@ -39,10 +39,6 @@ async def create_upload_file(
     
         # Read the uploaded file
         contents = await file.read()   
-        # Save the uploaded image
-        with open(valid["file_path"], "wb") as save_uploaded_image:
-            save_uploaded_image.write(contents)
-            logger.info(f"Saved uploaded image to {valid['file_path']}")
 
         if input_width > 0 and input_height >0:
             # Process the image: detect and crop face
@@ -85,8 +81,8 @@ async def create_upload_file(
             processed_img=upscaled_url,
         )
         # Return the URL to the frontend
-        return {"image_url": upscaled_url}
         logger.info("Process completed successfully within {total_processing_time} sceonds")
+        return {"image_url": upscaled_url}
     
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")

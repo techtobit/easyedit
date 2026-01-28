@@ -103,5 +103,4 @@ async def detect_and_crop(image, input_width, input_height):
 	eye_center, chin = get_face_points(landmarks, img_w, img_h)
 	
 	cropped = crop_face(image, eye_center, chin, input_width, input_height)
-	cv2.imwrite("cropped_face.jpg", cropped)
 	return resize_image(cropped, input_width, input_height)
