@@ -1,6 +1,5 @@
 {
   "buildCommand": "pip install --upgrade pip setuptools wheel && pip install --no-cache-dir -r requirements.txt",
-  "runtime": "python3.11",
   "outputDirectory": ".",
   "env": {
     "PYTHONUNBUFFERED": "1"
