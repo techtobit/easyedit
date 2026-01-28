@@ -7,12 +7,12 @@ import numpy as np
 from fastapi import Request
 from utils.viewLog import logger
 from database.data_insert import create_log
-from api.face_processing import detect_and_crop
+from app.face_processing import detect_and_crop
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.validateUpload import validate_upload
 from database.database import engine, Base, get_db
 from fastapi import FastAPI, File, UploadFile, Depends
-from api.replicateAPI import remove_background, upscale_image
+from app.replicateAPI import remove_background, upscale_image
 
 app = FastAPI()
 
