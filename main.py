@@ -1,13 +1,12 @@
 import os
 import io
 import cv2
-import uuid
-import base64
-import requests
+import time
 import tempfile
 import numpy as np
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Request
 from utils.viewLog import logger
+from sqlalchemy.ext.asyncio import AsyncSession
 from core.data_insert import create_log
 from face_processing import detect_and_crop
 from core.database import engine, Base, get_db
@@ -25,13 +24,15 @@ async def read_root():
 
 @app.post("/upload/")
 async def create_upload_file(
+        request: Request,
         file: UploadFile = File(...),
         input_width: int = File(...),
         input_height: int = File(...),
         db: AsyncSession = Depends(get_db)):
     try:
-
-
+        # Start timer
+        start_time = time.perf_counter()
+        
         valid = await validate_upload(file)
         if not valid["status"]:
             return {"error": valid["message"]}
@@ -71,17 +72,21 @@ async def create_upload_file(
             logger.info(f"Image upscaled, URL: {upscaled_url}")
             os.unlink(tmp_croped_img)
 
+        # Calculate processing time in milliseconds
+        total_time = time.perf_counter() - start_time
+        total_processing_time = round(total_time , 2)
+        
         #Save to db
         await create_log(
             db=db,
             user_id=1,
-            processing_time=0.0,
+            processing_time=total_processing_time,
             status="success",
             processed_img=upscaled_url,
         )
         # Return the URL to the frontend
         return {"image_url": upscaled_url}
-        logger.info("Process completed successfully.")
+        logger.info("Process completed successfully within {total_processing_time} sceonds")
     
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")

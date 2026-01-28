@@ -4,8 +4,8 @@ from core.processing_log import ProcessingLog
 async def create_log(
     db: AsyncSession,
     user_id: int = 1,
-    processing_time: float = 0.0,
-    status: str = "pending",
+    processing_time: float=None,
+    status: str = "default",
     processed_img: str = None,
     ):
     log = ProcessingLog(
