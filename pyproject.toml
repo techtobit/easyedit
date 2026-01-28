@@ -1,6 +1,6 @@
 [project.scripts]
 name = "easyedit"
-app = "app.main:app"
+app = "api.index:app"
 version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
