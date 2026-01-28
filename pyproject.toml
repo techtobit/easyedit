@@ -11,7 +11,6 @@ dependencies = [
   "python-multipart",
   "pillow",
   "numpy",
-  "opencv-python",
+  "opencv-python-headless",
   "mediapipe",
-  "dotenv",
 ]

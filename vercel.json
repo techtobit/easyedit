@@ -1,0 +1,12 @@
+{
+  "buildCommand": "pip install --no-cache-dir -r requirements.txt",
+  "outputDirectory": ".",
+  "functions": {
+    "app/main.py": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "PYTHONUNBUFFERED": "1"
+  }
+}
