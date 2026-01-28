@@ -1,4 +1,4 @@
 from app.main import app
 
-# Export the FastAPI app for Vercel
-__all__ = ['app']
+# This is the ASGI application that Vercel will use
+
