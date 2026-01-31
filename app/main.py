@@ -4,27 +4,33 @@ import cv2
 import time
 import tempfile
 import numpy as np
-from fastapi import Request
 from utils.viewLog import logger
 from database.data_insert import create_log
 from app.face_processing import detect_and_crop
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.validateUpload import validate_upload
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from database.database import engine, Base, get_db
-from fastapi import FastAPI, File, UploadFile, Depends
+from fastapi import FastAPI, Form, File, UploadFile, Request, Depends
 from app.replicateAPI import remove_background, upscale_image
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="template")
 
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-@app.get("/")
-async def read_root():
-    return {"EasyEdit": "Let's enhance your images easily!"}
-
+@app.get("/", response_class=HTMLResponse)
+def read_root(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="index.html", context={}
+    )
 
 @app.post("/upload/")
 async def create_upload_file(
