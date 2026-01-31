@@ -21,4 +21,4 @@ async def validate_upload(file: UploadFile) -> dict:
     # Reset file pointer for further use
     await file.seek(0)
     
-    return {"status": True, "file_path": save_image}
+    return {"status": True}

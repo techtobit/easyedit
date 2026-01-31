@@ -36,14 +36,21 @@ def read_root(request: Request):
 async def create_upload_file(
         request: Request,
         file: UploadFile = File(...),
-        input_width: int = File(...),
-        input_height: int = File(...),
+
+        # FORM FIELDS
+        input_width: int = Form(0),
+        input_height: int = Form(0),
+        color_type: str = Form("original"),
+        color_value: str | None = Form(None),
         db: AsyncSession = Depends(get_db)):
     try:
         # Start timer
         start_time = time.perf_counter()
+        print('--file -', file)
+        # file = file.filename
         
         valid = await validate_upload(file)
+        print(valid)
         if not valid["status"]:
             return {"error": valid["message"]} 
 
@@ -90,6 +97,13 @@ async def create_upload_file(
         # Return the URL to the frontend
         logger.info(f"Process completed successfully within {total_processing_time:.2f} seconds")
         return {"image_url": upscaled_url}
+        return {
+                "filename": file.filename,
+                "width": width,
+                "height": height,
+                "color_type": color_type,
+                "color_value": color_value
+            }
     
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
