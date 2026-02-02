@@ -36,79 +36,102 @@ def read_root(request: Request):
 async def create_upload_file(
         request: Request,
         file: UploadFile = File(...),
-
-        # FORM FIELDS
         input_width: int = Form(0),
         input_height: int = Form(0),
         color_type: str = Form("original"),
         color_value: str | None = Form(None),
-        db: AsyncSession = Depends(get_db)):
+        db: AsyncSession = Depends(get_db)
+    ):
     try:
-        # Start timer
         start_time = time.perf_counter()
-        print('--file -', file)
-        # file = file.filename
-        
+
+        # 1. Validate
         valid = await validate_upload(file)
-        print(valid)
         if not valid["status"]:
-            return {"error": valid["message"]} 
+            return {"error": valid["message"]}
 
-        if input_width > 0 and input_height >0:
-            # Process the image: detect and crop face
-            convert_img = await image_convertion(file)
-            croped_img = await detect_and_crop(convert_img, input_width, input_height)
-            if croped_img is None:
-                logger.error(f'No face detected in the image')
-                return {"error": "No face detected in the image. Maximize the face size or try another image."}
+        print('----------- file ---------', file)
 
-            tmp_croped_img= await temp_save(croped_img)
-            # remove background
-            bg_removed = await remove_background(tmp_croped_img)
-            logger.info(f"Background removed, URL: {bg_removed}")
+        # 2. Convert file once
+        img_to_btyes = await image_convertion(file)
 
-            # Upscale image
-            upscaled_url = await upscale_image(bg_removed)
-            logger.info(f"Image upscaled, URL: {upscaled_url}")
-            # Clean up temp files
-            os.unlink(tmp_croped_img)
+        result_img = None  # this will always be fed to upscaler
+        tmp_files = []
 
-        else:
-            bytes_image = await image_convertion(file)
-            tmp_croped_img= await temp_save(bytes_image)
-            bg_removed = await remove_background(tmp_croped_img)
-            logger.info(f"Background removed, URL: {bg_removed}")
-            upscaled_url = await upscale_image(bg_removed)
-            logger.info(f"Image upscaled, URL: {upscaled_url}")
-            os.unlink(tmp_croped_img)
+        is_custom_size = input_width > 0 and input_height > 0
+        is_original_size = not is_custom_size
 
-        # Calculate processing time in milliseconds
-        total_time = time.perf_counter() - start_time
-        total_processing_time = round(total_time , 2)
-        
-        #Save to db
+        # --------------------------------------------------
+        # CASE 1: custom size + custom color
+        # mediapipe → removebg → add color → upscaler
+        # --------------------------------------------------
+        if is_custom_size and color_type == "custom":
+            cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
+            if cropped_img is None:
+                return {"error": "No face detected"}
+            tmp = await temp_save(cropped_img)
+            tmp_files.append(tmp)
+
+            bg_removed = await remove_background(tmp)
+            # colored = await apply_color(bg_removed, color_value)
+            result_img = bg_removed
+            print('1st condition-', result_img)
+
+        # --------------------------------------------------
+        # CASE 2: original size + original color
+        # upscaler only
+        # --------------------------------------------------
+        elif is_original_size and color_type == "original":
+            result_img = img_to_btyes
+
+        # --------------------------------------------------
+        # CASE 3: custom size + original color
+        # mediapipe → upscaler
+        # --------------------------------------------------
+        elif is_custom_size and color_type == "original":
+            cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
+            if cropped_img is None:
+                return {"error": "No face detected"}
+            result_img = cropped_img
+
+        # --------------------------------------------------
+        # CASE 4: original size + transparent
+        # upscaler → removebg
+        # --------------------------------------------------
+        elif is_original_size and color_type == "transparent":
+            tmp = await temp_save(img_to_btyes)
+            tmp_files.append(tmp)
+            bg_removed = await remove_background(tmp)
+            result_img = bg_removed
+
+        # --------------------------------------------------
+        # FINAL: always upscale
+        # --------------------------------------------------
+        upscaled_url = await upscale_image(result_img)
+
+        # Cleanup
+        for file in tmp_files:
+            if os.path.exists(file):
+                os.unlink(file)
+
+        total_time = round(time.perf_counter() - start_time, 2)
+
         await create_log(
             db=db,
             user_id=1,
-            processing_time=total_processing_time,
+            processing_time=total_time,
             status="success",
             processed_img=upscaled_url,
         )
-        # Return the URL to the frontend
-        logger.info(f"Process completed successfully within {total_processing_time:.2f} seconds")
-        return {"image_url": upscaled_url}
-        return {
-                "filename": file.filename,
-                "width": width,
-                "height": height,
-                "color_type": color_type,
-                "color_value": color_value
-            }
-    
-    except Exception as e:
-        logger.error(f"An error occurred: {str(e)}")
-        return {"error": str(e)}
 
+        return {
+            "image_url": upscaled_url,
+            "processing_time": total_time
+        }
+
+    except Exception as e:
+        logger.error(str(e))
+        return {"error": str(e)}
 
 async def image_convertion(file):
     # Read the uploaded file

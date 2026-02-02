@@ -54,6 +54,8 @@
         class="flex-grow-1 d-flex align-items-center justify-content-center text-secondary position-relative">
 
         <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
+        <!-- <input type="input" name="image" id="fileUpload" class=""> -->
+
 
         <!-- Upload prompt -->
         <div id="uploadContent" class="text-center" style="cursor:pointer;">
@@ -75,33 +77,33 @@
                 <!-- Size selection -->
                 <p class="border-bottom font-weight-bold">Select Image Size</p>
                 <div class="btn-group d-flex justify-content-center flex-wrap gap-2" role="group">
-                  <input type="radio" class="btn-check" name="size" id="orgiinal_size" value="0" checked>
+                  <input type="radio" class="btn-check" name="default_size" id="orgiinal_size" value="0" checked>
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="orgiinal_size" data-width="0"
                     data-height="0">original</label>
 
-                  <input type="radio" class="btn-check" name="size" id="passport_size" value="144x192">
+                  <input type="radio" class="btn-check" name="default_size" id="passport_size" value="144x192">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="passport_size" data-width="144"
                     data-height="192">144x192</label>
 
-                  <input type="radio" class="btn-check" name="size" id="job_size" value="300x300">
+                  <input type="radio" class="btn-check" name="default_size" id="job_size" value="300x300">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="job_size" data-width="300"
                     data-height="300">300x300</label>
 
-                  <input type="radio" class="btn-check" name="size" id="academic_size" value="120x180">
+                  <input type="radio" class="btn-check" name="default_size" id="academic_size" value="120x180">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="academic_size" data-width="120"
                     data-height="180">120x180</label>
 
-                  <input type="radio" class="btn-check" name="size" id="signature_size" value="120x80">
+                  <input type="radio" class="btn-check" name="default_size" id="signature_size" value="120x80">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="signature_size" data-width="120"
                     data-height="80">120x80</label>
 
                   <div class="d-flex align-items-center justify-content-center px-2 gap-2">
                     <label class="" for="custom_width" data-width="">Width</label>
-                    <input type="input" style="width: 100px;" class=" btn btn-outline-secondary rounded-pill"
-                      name="size" id="custom_width" value="">
+                    <input type="number" min="0" style="width: 100px;" class=" btn btn-outline-secondary rounded-pill"
+                      name="custom_size" id="custom_width" value="">
                     <label class="" for="custom_height" data-width="">Height</label>
-                    <input type="input" style="width: 100px;" class="btn btn-outline-secondary rounded-pill" name="size"
-                      id="custom_height" value="">
+                    <input type="number" min="0" style="width: 100px;" class="btn btn-outline-secondary rounded-pill"
+                      name="custom_size" id="custom_height" value="">
                   </div>
                 </div>
               </div>
@@ -111,16 +113,15 @@
               <div class="w-100">
                 <p class="w-full border-bottom pt-5 font-weight-bold">Select Image Color</p>
                 <div class="btn-group d-flex justify-content-center gap-2" role="group">
-                  <input type="radio" class="btn-check" name="color" id="color_original" value="original" checked>
+                  <input type="radio" class="btn-check" name="bg_type" id="color_original" value="original" checked>
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="color_original">Original</label>
 
-                  <input type="radio" class="btn-check" name="color" id="color_transparent" value="bw">
+                  <input type="radio" class="btn-check" name="bg_type" id="color_transparent" value="color_transparent">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="color_transparent">Transparent</label>
 
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="colors_custom">Colors</label>
-                  <input type="color" class="btn-check" name="colors" 
-                  list="colors" id="colors_custom" value="#ff0000" >
-                  <datalist id="colors">
+                  <!-- <label class="btn btn-outline-secondary rounded-pill px-2" for="colorInput">Colors</label> -->
+                  <input type="color" class="" list="colors" id="bg_color" placeholder="#ff0000">
+                  <datalist id="colors" >
                     <option value="#ff0000"></option>
                     <option value="#00ff00"></option>
                     <option value="#0000ff"></option>
@@ -131,6 +132,7 @@
                     <option value="#00cc00"></option>
                     <option value="#0034af"></option>
                   </datalist>
+
                 </div>
               </div>
 
