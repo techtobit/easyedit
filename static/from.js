@@ -147,7 +147,7 @@ const getAfterProcessBtn = document.getElementById('success_btns')
   // http://127.0.0.1:8000/upload/
   /* -------- SUBMIT -------- */
   try {
-    const res = await fetch("", {
+    const res = await fetch("http://127.0.0.1:8000/upload/", {
       method: "POST",
       body: formData
     });
@@ -157,10 +157,14 @@ const getAfterProcessBtn = document.getElementById('success_btns')
     }
 
     const result = await res.json();
+    console.log('print result - ', result);
+    
 
     // If backend returns processed PNG URL
-    if (result.url) {
-      previewImage.src = result.url;
+    if (result.image_url) {
+      console.log('- print url - ', result.image_url);
+      
+      previewImage.src = result.image_url;
       getProcessBtn.classList.add('d-none');
       getAfterProcessBtn.classList.remove('d-none')
       

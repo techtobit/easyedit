@@ -50,8 +50,6 @@ async def create_upload_file(
         if not valid["status"]:
             return {"error": valid["message"]}
 
-        print('----------- file ---------', file)
-
         # 2. Convert file once
         img_to_btyes = await image_convertion(file)
 
@@ -65,7 +63,7 @@ async def create_upload_file(
         # CASE 1: custom size + custom color
         # mediapipe → removebg → add color → upscaler
         # --------------------------------------------------
-        if is_custom_size and color_type == "cus`t12tom":
+        if is_custom_size and color_type == "custom":
             cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
             if cropped_img is None:
                 return {"error": "No face detected"}
