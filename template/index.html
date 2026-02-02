@@ -65,7 +65,7 @@
         </div>
 
         <!-- Preview -->
-        <div id="previewContainer" class="d-none w-100 h-100">
+        <div id="previewContainer" class="w-100 h-100">
           <div class="row h-100 g-0">
             <!-- Left Column - Image -->
             <div class="col-7 d-flex align-items-center justify-content-center border-end">
@@ -75,7 +75,7 @@
             <div class="col-5 d-flex flex-column justify-content-center align-items-center p-3 bg-white">
               <div id="controls" class="d-flex flex-column gap-3 w-100">
                 <!-- Size selection -->
-                <p class="border-bottom font-weight-bold">Select Image Size</p>
+                <p class="border-bottom font-weight-bold">Select or Input Image Size</p>
                 <div class="btn-group d-flex justify-content-center flex-wrap gap-2" role="group">
                   <input type="radio" class="btn-check" name="default_size" id="orgiinal_size" value="0" checked>
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="orgiinal_size" data-width="0"
@@ -111,26 +111,31 @@
 
               <!-- Color selection -->
               <div class="w-100">
-                <p class="w-full border-bottom pt-5 font-weight-bold">Select Image Color</p>
+                <p class="w-full border-bottom pt-5 font-weight-bold">Select Background Type</p>
                 <div class="btn-group d-flex justify-content-center gap-2" role="group">
                   <input type="radio" class="btn-check" name="bg_type" id="color_original" value="original" checked>
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="color_original">Original</label>
 
                   <input type="radio" class="btn-check" name="bg_type" id="color_transparent" value="color_transparent">
                   <label class="btn btn-outline-secondary rounded-pill px-2" for="color_transparent">Transparent</label>
-
                   <!-- <label class="btn btn-outline-secondary rounded-pill px-2" for="colorInput">Colors</label> -->
-                  <input type="color" class="" list="colors" id="bg_color" placeholder="#ff0000">
-                  <datalist id="colors" >
-                    <option value="#ff0000"></option>
-                    <option value="#00ff00"></option>
-                    <option value="#0000ff"></option>
-                    <option value="#660000"></option>
-                    <option value="#006600"></option>
-                    <option value="#000066"></option>
-                    <option value="#cc0000"></option>
-                    <option value="#00cc00"></option>
-                    <option value="#0034af"></option>
+                  <input type="color" title="choose_color" style="width: 140px; height: 40px;" class="form-control"
+                    list="colors" id="bg_color" value="#508de8">
+                  <datalist id="colors">
+                    <option value="#ffffff"></option>
+                    <option value="#508de8"></option>
+                    <option value="#1890ff"></option>
+                    <option value="#2196f3"></option>
+                    <option value="#03a9f4"></option>
+                    <option value="#3eb5ff"></option>
+                    <option value="#00bcd4"></option>
+                    <option value="#673ab7"></option>
+                    <option value="#3f51b5"></option>
+                    <option value="#f44336"></option>
+                    <option value="#e91e63"></option>
+                    <option value="#000000"></option>
+                    <option value="#607d8b"></option>
+                    <option value="#ffeb3b"></option>
                   </datalist>
 
                 </div>
@@ -158,21 +163,21 @@
     <div class="container d-flex justify-content-between align-items-center flex-wrap">
       <!-- Left side -->
       <div class="mb-2 mb-md-0">
-        <span>&copy; 2026 | Developed by Your Name</span>
+        <span>&copy; 2026 | Developed by Ashraf Uddin</span>
       </div>
 
       <!-- Right side: social media -->
       <div class="d-flex gap-3">
-        <a href="https://facebook.com" target="_blank" class="text-white">
+        <a href="https://facebook.com/ashrafuddin26" target="_blank" class="text-white">
           <i class="bi bi-facebook" style="font-size:1.2rem;"></i>
         </a>
-        <a href="https://youtube.com" target="_blank" class="text-white">
+        <a href="https://youtube.com/tech-to-bit" target="_blank" class="text-white">
           <i class="bi bi-youtube" style="font-size:1.2rem;"></i>
         </a>
-        <a href="https://github.com" target="_blank" class="text-white">
+        <a href="https://github.com/techtobit" target="_blank" class="text-white">
           <i class="bi bi-github" style="font-size:1.2rem;"></i>
         </a>
-        <a href="https://linkedin.com" target="_blank" class="text-white">
+        <a href="https://linkedin.com/ashrafuddin17" target="_blank" class="text-white">
           <i class="bi bi-linkedin" style="font-size:1.2rem;"></i>
         </a>
       </div>
@@ -182,6 +187,5 @@
 
 </body>
 <script src="../static/from.js"></script>
-<script src="../static/submit.js"></script>
 
 </html>
