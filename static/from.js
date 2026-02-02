@@ -163,6 +163,7 @@ const getAfterProcessBtn = document.getElementById('success_btns')
       previewImage.src = result.url;
       getProcessBtn.classList.add('d-none');
       getAfterProcessBtn.classList.remove('d-none')
+      
     }
 
     console.log("Upload success:", result);

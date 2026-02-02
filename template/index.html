@@ -11,151 +11,148 @@
 </head>
 
 <body class="">
-  <div class="">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom border-secondary ">
-      <div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom border-secondary ">
+    <div class="container">
 
-        <!-- Left: Brand + Links -->
-        <a class="navbar-brand fw-bold" href="#">EasyEdit</a>
+      <!-- Left: Brand + Links -->
+      <a class="navbar-brand fw-bold" href="#">EasyEdit</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">API</a>
-            </li>
-          </ul>
+      <div class="collapse navbar-collapse" id="mainNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">API</a>
+          </li>
+        </ul>
 
-          <!-- Right: Auth buttons -->
-          <div class="d-flex gap-2">
-            <a href="#" class="btn btn-outline-secondary rounded-pill px-4">
-              Login
-            </a>
-            <a href="#" class="btn btn-primary rounded-pill px-4">
-              Sign Up
-            </a>
-          </div>
+        <!-- Right: Auth buttons -->
+        <div class="d-flex gap-2">
+          <a href="#" class="btn btn-outline-secondary rounded-pill px-4">
+            Login
+          </a>
+          <a href="#" class="btn btn-primary rounded-pill px-4">
+            Sign Up
+          </a>
         </div>
-
       </div>
-    </nav>
 
-    <form id="uploadForm" method="post" enctype="multipart/form-data" class="container-fluid d-flex flex-column"
-      style="height: calc(100vh - 127px);">
+    </div>
+  </nav>
 
-      <!-- Upload / Preview Area -->
-      <div id="dropZone"
-        class="flex-grow-1 d-flex align-items-center justify-content-center text-secondary position-relative">
+  <form id="uploadForm" method="post" enctype="multipart/form-data" class="container-fluid py-2 d-flex flex-column"
+   style="height: calc(100vh - 103px);" >
+        <!-- style="height: calc(100vh - 127px);" -->
 
-        <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
-        <!-- <input type="input" name="image" id="fileUpload" class=""> -->
+    <!-- Upload / Preview Area -->
+    <div id="dropZone" style="border: 2px; border-style: dashed;"
+      class="flex-grow-1 bg-info-subtle d-flex align-items-center justify-content-center text-secondary position-relative">
 
+      <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
+      <!-- Upload prompt -->
+      <div id="uploadContent" class="text-center" style="cursor:pointer;">
+        <p class="text-muted">One Click Image Edit</p>
+        <h3 class="fw-bold">Drop image here</h3>
+        <p class="text-muted">or click to upload</p>
+      </div>
 
-        <!-- Upload prompt -->
-        <div id="uploadContent" class="text-center" style="cursor:pointer;">
-          <p class="text-muted">One Click Image Edit</p>
-          <h3 class="fw-bold">Drop image here</h3>
-          <p class="text-muted">or click to upload</p>
-        </div>
+      <!-- Preview -->
+      <div id="previewContainer" class="d-none w-100 h-100">
+        <div class="row h-100 w-100 g-0 bg-light">
+          <!-- Left Column - Image -->
+          <div class="col-7 d-flex justify-content-center border-end">
+            <img id="previewImage" class="border border-dark m-2" style="width: 50%;" />
+          </div>
+          <!-- Right Column - Controls -->
+          <div class="col-5 d-flex flex-column justify-content-center align-items-center p-3 bg-white">
+            <div id="controls" class="d-flex flex-column gap-3 w-100">
+              <!-- Size selection -->
+              <p class="border-bottom font-weight-bold">Select or Input Image Size</p>
+              <div class="btn-group d-flex justify-content-center flex-wrap gap-2" role="group">
+                <input type="radio" class="btn-check" name="default_size" id="orgiinal_size" value="0" checked>
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="orgiinal_size" data-width="0"
+                  data-height="0">original</label>
 
-        <!-- Preview -->
-        <div id="previewContainer" class="w-100 h-100">
-          <div class="row h-100 g-0">
-            <!-- Left Column - Image -->
-            <div class="col-7 d-flex align-items-center justify-content-center border-end">
-              <img id="previewImage" class="img-fluid" style="object-fit:contain; height:60%;" />
+                <input type="radio" class="btn-check" name="default_size" id="passport_size" value="144x192">
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="passport_size" data-width="144"
+                  data-height="192">144x192</label>
+
+                <input type="radio" class="btn-check" name="default_size" id="job_size" value="300x300">
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="job_size" data-width="300"
+                  data-height="300">300x300</label>
+
+                <input type="radio" class="btn-check" name="default_size" id="academic_size" value="120x180">
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="academic_size" data-width="120"
+                  data-height="180">120x180</label>
+
+                <input type="radio" class="btn-check" name="default_size" id="signature_size" value="120x80">
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="signature_size" data-width="120"
+                  data-height="80">120x80</label>
+
+                <div class="d-flex align-items-center justify-content-center px-2 gap-2">
+                  <label class="" for="custom_width" data-width="">Width</label>
+                  <input type="number" min="0" style="width: 100px;" class=" btn btn-outline-secondary rounded-pill"
+                    name="custom_size" id="custom_width" value="">
+                  <label class="" for="custom_height" data-width="">Height</label>
+                  <input type="number" min="0" style="width: 100px;" class="btn btn-outline-secondary rounded-pill"
+                    name="custom_size" id="custom_height" value="">
+                </div>
+              </div>
             </div>
-            <!-- Right Column - Controls -->
-            <div class="col-5 d-flex flex-column justify-content-center align-items-center p-3 bg-white">
-              <div id="controls" class="d-flex flex-column gap-3 w-100">
-                <!-- Size selection -->
-                <p class="border-bottom font-weight-bold">Select or Input Image Size</p>
-                <div class="btn-group d-flex justify-content-center flex-wrap gap-2" role="group">
-                  <input type="radio" class="btn-check" name="default_size" id="orgiinal_size" value="0" checked>
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="orgiinal_size" data-width="0"
-                    data-height="0">original</label>
 
-                  <input type="radio" class="btn-check" name="default_size" id="passport_size" value="144x192">
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="passport_size" data-width="144"
-                    data-height="192">144x192</label>
 
-                  <input type="radio" class="btn-check" name="default_size" id="job_size" value="300x300">
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="job_size" data-width="300"
-                    data-height="300">300x300</label>
+            <!-- Color selection -->
+            <div class="w-100">
+              <p class="w-full border-bottom pt-5 font-weight-bold">Select Background Type</p>
+              <div class="btn-group d-flex justify-content-center gap-2" role="group">
+                <input type="radio" class="btn-check" name="bg_type" id="color_original" value="original" checked>
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="color_original">Original</label>
 
-                  <input type="radio" class="btn-check" name="default_size" id="academic_size" value="120x180">
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="academic_size" data-width="120"
-                    data-height="180">120x180</label>
+                <input type="radio" class="btn-check" name="bg_type" id="color_transparent" value="color_transparent">
+                <label class="btn btn-outline-secondary rounded-pill px-2" for="color_transparent">Transparent</label>
+                <!-- <label class="btn btn-outline-secondary rounded-pill px-2" for="colorInput">Colors</label> -->
+                <input type="color" title="choose_color" style="width: 140px; height: 40px;" class="form-control"
+                  list="colors" id="bg_color" value="#508de8">
+                <datalist id="colors">
+                  <option value="#ffffff"></option>
+                  <option value="#508de8"></option>
+                  <option value="#1890ff"></option>
+                  <option value="#2196f3"></option>
+                  <option value="#03a9f4"></option>
+                  <option value="#3eb5ff"></option>
+                  <option value="#00bcd4"></option>
+                  <option value="#673ab7"></option>
+                  <option value="#3f51b5"></option>
+                  <option value="#f44336"></option>
+                  <option value="#e91e63"></option>
+                  <option value="#000000"></option>
+                  <option value="#607d8b"></option>
+                  <option value="#ffeb3b"></option>
+                </datalist>
 
-                  <input type="radio" class="btn-check" name="default_size" id="signature_size" value="120x80">
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="signature_size" data-width="120"
-                    data-height="80">120x80</label>
-
-                  <div class="d-flex align-items-center justify-content-center px-2 gap-2">
-                    <label class="" for="custom_width" data-width="">Width</label>
-                    <input type="number" min="0" style="width: 100px;" class=" btn btn-outline-secondary rounded-pill"
-                      name="custom_size" id="custom_width" value="">
-                    <label class="" for="custom_height" data-width="">Height</label>
-                    <input type="number" min="0" style="width: 100px;" class="btn btn-outline-secondary rounded-pill"
-                      name="custom_size" id="custom_height" value="">
-                  </div>
-                </div>
               </div>
+            </div>
 
+            <!-- Submit -->
+            <button id="process_btn" type="submit" class="btn btn-primary rounded-pill px-4 mt-4 w-100">
+              <i class="bi bi-magic me-2"></i>
+              Process Image
+            </button>
 
-              <!-- Color selection -->
-              <div class="w-100">
-                <p class="w-full border-bottom pt-5 font-weight-bold">Select Background Type</p>
-                <div class="btn-group d-flex justify-content-center gap-2" role="group">
-                  <input type="radio" class="btn-check" name="bg_type" id="color_original" value="original" checked>
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="color_original">Original</label>
+            <div id="success_btns" class="d-none w-100">
+              <label for="fileUpload"
+                class="btn btn-info rounded-pill px-4 mt-4 w-100 d-flex align-items-center justify-content-center gap-2">
 
-                  <input type="radio" class="btn-check" name="bg_type" id="color_transparent" value="color_transparent">
-                  <label class="btn btn-outline-secondary rounded-pill px-2" for="color_transparent">Transparent</label>
-                  <!-- <label class="btn btn-outline-secondary rounded-pill px-2" for="colorInput">Colors</label> -->
-                  <input type="color" title="choose_color" style="width: 140px; height: 40px;" class="form-control"
-                    list="colors" id="bg_color" value="#508de8">
-                  <datalist id="colors">
-                    <option value="#ffffff"></option>
-                    <option value="#508de8"></option>
-                    <option value="#1890ff"></option>
-                    <option value="#2196f3"></option>
-                    <option value="#03a9f4"></option>
-                    <option value="#3eb5ff"></option>
-                    <option value="#00bcd4"></option>
-                    <option value="#673ab7"></option>
-                    <option value="#3f51b5"></option>
-                    <option value="#f44336"></option>
-                    <option value="#e91e63"></option>
-                    <option value="#000000"></option>
-                    <option value="#607d8b"></option>
-                    <option value="#ffeb3b"></option>
-                  </datalist>
+                <i class="bi bi-upload"></i>
+                Upload New Image
 
-                </div>
-              </div>
-
-              <!-- Submit -->
-              <button id="process_btn" type="submit" class="btn btn-primary rounded-pill px-4 mt-4 w-100">
-                <i class="bi bi-magic me-2"></i>
-                Process Image
-              </button>
-
-              <div id="success_btns" class="d-none w-100">
-                <label for="fileUpload"
-                  class="btn btn-info rounded-pill px-4 mt-4 w-100 d-flex align-items-center justify-content-center gap-2">
-
-                  <i class="bi bi-upload"></i>
-                  Upload New Image
-
-                  <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
-                </label>
+                <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
+              </label>
 
               <button type="button" class="btn btn-success rounded-pill px-4 mt-4 w-100">
                 <i class="bi bi-download me-2"></i>
@@ -166,25 +163,23 @@
           </div>
         </div>
       </div>
-  </div>
-  </div>
+    </div>
   </form>
 
-
+  <!-- 
   <div class="text-center mt-4">
-    <img id="preview" style="max-width:400px; display:none;" class="img-thumbnail">
+    <img id="preview" style="max-width:400px; display:flex;" class="img-thumbnail bg-primary">
   </div>
-  </div>
+  </div> -->
 
   <!-- Footer -->
-  <footer class="bg-dark text-white py-2 mt-auto z-index-2">
+  <footer class="bg-dark text-white py-2 z-index-2">
     <div class="container d-flex justify-content-between align-items-center flex-wrap">
-      <!-- Left side -->
+
       <div class="mb-2 mb-md-0">
         <span>&copy; 2026 | Developed by Ashraf Uddin</span>
       </div>
 
-      <!-- Right side: social media -->
       <div class="d-flex gap-3">
         <a href="https://facebook.com/ashrafuddin26" target="_blank" class="text-white">
           <i class="bi bi-facebook" style="font-size:1.2rem;"></i>
