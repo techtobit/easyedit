@@ -126,6 +126,11 @@ form.addEventListener("submit", async (e) => {
   console.log('Outter Fun Radio Selected', selectedWidth, selectedHeight);
   console.log('Outter Fun Color Selected', bgType, colorValue);
 
+
+//  hide porcess btn and show success btns 
+const getProcessBtn = document.getElementById('process_btn')
+const getAfterProcessBtn = document.getElementById('success_btns')
+
   /* -------- FORM DATA -------- */
   const formData = new FormData();
   formData.append("file", fileInput.files[0]);
@@ -156,6 +161,8 @@ form.addEventListener("submit", async (e) => {
     // If backend returns processed PNG URL
     if (result.url) {
       previewImage.src = result.url;
+      getProcessBtn.classList.add('d-none');
+      getAfterProcessBtn.classList.remove('d-none')
     }
 
     console.log("Upload success:", result);
