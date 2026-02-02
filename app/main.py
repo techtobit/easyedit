@@ -65,7 +65,7 @@ async def create_upload_file(
         # CASE 1: custom size + custom color
         # mediapipe → removebg → add color → upscaler
         # --------------------------------------------------
-        if is_custom_size and color_type == "custom":
+        if is_custom_size and color_type == "cus`t12tom":
             cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
             if cropped_img is None:
                 return {"error": "No face detected"}

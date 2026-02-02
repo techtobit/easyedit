@@ -50,13 +50,14 @@
         <!-- style="height: calc(100vh - 127px);" -->
 
     <!-- Upload / Preview Area -->
-    <div id="dropZone" style="border: 2px; border-style: dashed;"
+    <div id="dropZone" style="border: 2px; border-style: dashed; border-radius: 5px;"
       class="flex-grow-1 bg-info-subtle d-flex align-items-center justify-content-center text-secondary position-relative">
 
       <input type="file" name="image" id="fileUpload" accept="image/*" class="d-none">
       <!-- Upload prompt -->
       <div id="uploadContent" class="text-center" style="cursor:pointer;">
         <p class="text-muted">One Click Image Edit</p>
+        <i class="bi bi-upload fs-3"></i>
         <h3 class="fw-bold">Drop image here</h3>
         <p class="text-muted">or click to upload</p>
       </div>
@@ -65,8 +66,8 @@
       <div id="previewContainer" class="d-none w-100 h-100">
         <div class="row h-100 w-100 g-0 bg-light">
           <!-- Left Column - Image -->
-          <div class="col-7 d-flex justify-content-center border-end">
-            <img id="previewImage" class="border border-dark m-2" style="width: 50%;" />
+          <div class="col-7 my-2 d-flex justify-content-center border-end">
+            <img id="previewImage" class="object-fit-contain border border-dark" style="width: 45%;" />
           </div>
           <!-- Right Column - Controls -->
           <div class="col-5 d-flex flex-column justify-content-center align-items-center p-3 bg-white">
