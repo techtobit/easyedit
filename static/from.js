@@ -204,6 +204,10 @@ radioBgType.forEach(radio => {
   radio.addEventListener('change', () => {
     if (!radio.checked) return;
     bgType = document.querySelector('input[name="bg_type"]:checked').id;
+    if(bgType == 'transparent'){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+    }
   })
 })
 
