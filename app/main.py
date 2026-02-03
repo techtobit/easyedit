@@ -5,16 +5,16 @@ import time
 import tempfile
 import numpy as np
 from utils.viewLog import logger
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from database.data_insert import create_log
+from fastapi.templating import Jinja2Templates
 from app.face_processing import detect_and_crop
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.validateUpload import validate_upload
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from database.database import engine, Base, get_db
-from fastapi import FastAPI, Form, File, UploadFile, Request, Depends
 from app.replicateAPI import remove_background, upscale_image
+from fastapi import FastAPI, Form, File, UploadFile, Request, Depends
 
 app = FastAPI()
 
