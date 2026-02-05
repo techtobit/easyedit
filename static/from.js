@@ -129,18 +129,6 @@ function applyOutputSize(type) {
 }
 
 
-// downlaod image 
-
-const downloadBtn = document.getElementById('downloadBtn');
-downloadBtn.addEventListener("click", () => {
-  const link = document.createElement("a");
-  link.download = "image.png";
-  link.href = canvas.toDataURL("image/png");
-  link.click();
-});
-
-
-
 /* ------------------------------
    FORM SUBMIT LOGIC
 --------------------------------*/
@@ -216,6 +204,7 @@ colorPicker.addEventListener('input', () => {
 })
 
 
+let renamed_image_name = '';
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const LoaderAnimation = document.getElementById('magic_loader')
@@ -266,6 +255,7 @@ form.addEventListener("submit", async (e) => {
     if (result.image_url) {
       LoaderAnimation.classList.add("d-none");
       console.log('- print url - ', result.image_url);
+      renamed_image_name = result.image_name;
 
       loadImageToCanvas(result.image_url);
       getProcessBtn.classList.add('d-none');
@@ -279,4 +269,15 @@ form.addEventListener("submit", async (e) => {
     console.error("Upload failed:", err);
     alert("Upload failed. Check console & backend logs.");
   }
+});
+
+
+// downlaod image 
+
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.download = renamed_image_name;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
 });

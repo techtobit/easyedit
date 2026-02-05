@@ -45,6 +45,7 @@ async def create_upload_file(
     ):
     try:
         start_time = time.perf_counter()
+        original_filename = file.filename
 
         # 1. Validate
         valid = await validate_upload(file)
@@ -128,7 +129,8 @@ async def create_upload_file(
 
         return {
             "image_url": upscaled_url,
-            "processing_time": total_time
+            "image_name": f"easyedit - {original_filename}",
+            "processing_time": total_time,
         }
 
     except Exception as e:
