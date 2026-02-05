@@ -236,7 +236,7 @@ form.addEventListener("submit", async (e) => {
   /* -------- SUBMIT -------- */
   try {
 
-    const res = await fetch("http://127.0.0.1:8000/upload/", {
+    const res = await fetch("/upload/", {
       method: "POST",
       body: formData
     });
