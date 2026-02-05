@@ -14,11 +14,25 @@ from fastapi.templating import Jinja2Templates
 from app.face_processing import detect_and_crop
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.validateUpload import validate_upload
+from fastapi.middleware.cors import CORSMiddleware
 from database.database import engine, Base, get_db
 from app.replicateAPI import remove_background, upscale_image
 from fastapi import FastAPI, Form, File, UploadFile, Request, Depends
 
 app = FastAPI()
+
+
+# Allow your tunnel or all origins (for testing only)
+origins = ["*"]  # for testing only
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # <-- must include POST
+    allow_headers=["*"],
+)
+
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="template")
