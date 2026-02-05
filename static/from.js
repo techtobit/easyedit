@@ -189,7 +189,7 @@ customHeightInput.addEventListener('input', handleCustomInput);
 
 /* -------- COLOR LOGIC -------- */
 let bgType = "original";
-let colorValue = "";
+let colorValue = " ";
 
 
 // // Custom color picker overrides
@@ -212,7 +212,6 @@ colorPicker.addEventListener('input', () => {
   colorValue = colorPicker.value;
   bgColor = colorPicker.value;
   redrawCanvas()
-  bgType = "custom"
 
 })
 
@@ -237,8 +236,7 @@ form.addEventListener("submit", async (e) => {
   formData.append("file", fileInput.files[0]);
   formData.append("input_width", selectedWidth);
   formData.append("input_height", selectedHeight);
-  formData.append("color_type", bgType);
-  formData.append("color_value", colorValue);
+  formData.append("bgtype", bgType);
 
   console.log(formData)
   // Debug (remove later)

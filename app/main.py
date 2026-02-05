@@ -2,8 +2,10 @@ import os
 import io
 import cv2
 import time
+import base64
 import tempfile
 import numpy as np
+from PIL import Image
 from utils.viewLog import logger
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -38,8 +40,7 @@ async def create_upload_file(
         file: UploadFile = File(...),
         input_width: int = Form(0),
         input_height: int = Form(0),
-        color_type: str = Form("original"),
-        color_value: str | None = Form(None),
+        bgtype: str = Form('original'),
         db: AsyncSession = Depends(get_db)
     ):
     try:
@@ -61,9 +62,9 @@ async def create_upload_file(
 
         # --------------------------------------------------
         # CASE 1: custom size + custom color
-        # mediapipe → removebg → add color → upscaler
+        # mediapipe → removebg → upscaler
         # --------------------------------------------------
-        if is_custom_size and color_type == "custom":
+        if is_custom_size and bgtype == "transparent":
             cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
             if cropped_img is None:
                 return {"error": "No face detected"}
@@ -71,36 +72,39 @@ async def create_upload_file(
             tmp_files.append(tmp)
 
             bg_removed = await remove_background(tmp)
-            # colored = await apply_color(bg_removed, color_value)
             result_img = bg_removed
-            print('1st condition-', result_img)
+            # working
 
         # --------------------------------------------------
         # CASE 2: original size + original color
         # upscaler only
         # --------------------------------------------------
-        elif is_original_size and color_type == "original":
-            result_img = img_to_btyes
+        elif is_original_size and bgtype == "original":
+            result_img = await cv_to_imagefile(img_to_btyes)
+            # working 
+
 
         # --------------------------------------------------
         # CASE 3: custom size + original color
         # mediapipe → upscaler
         # --------------------------------------------------
-        elif is_custom_size and color_type == "original":
+        elif is_custom_size and bgtype == "original":
             cropped_img = await detect_and_crop(img_to_btyes, input_width, input_height)
             if cropped_img is None:
                 return {"error": "No face detected"}
-            result_img = cropped_img
+            result_img = await cv_to_imagefile(cropped_img)
+            # working
 
         # --------------------------------------------------
         # CASE 4: original size + transparent
         # upscaler → removebg
         # --------------------------------------------------
-        elif is_original_size and color_type == "transparent":
+        elif is_original_size and bgtype == "transparent":
             tmp = await temp_save(img_to_btyes)
             tmp_files.append(tmp)
             bg_removed = await remove_background(tmp)
             result_img = bg_removed
+            # working
 
         # --------------------------------------------------
         # FINAL: always upscale
@@ -136,6 +140,15 @@ async def image_convertion(file):
     contents = await file.read()  
     bytes_to_image = cv2.imdecode(np.frombuffer(contents, np.uint8), cv2.IMREAD_COLOR)
     return bytes_to_image
+
+async def cv_to_imagefile(img_cv):
+    success, buffer = cv2.imencode('.png', img_cv)
+    if not success:
+        raise ValueError("Failed to encode image")
+    file_obj = io.BytesIO(buffer.tobytes())
+    file_obj.name = "image.png"
+    return file_obj
+
 
 async def temp_save(image):
     tmp_img= tempfile.NamedTemporaryFile(suffix='.png', delete=False)
