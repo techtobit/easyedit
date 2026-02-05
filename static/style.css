@@ -14,3 +14,67 @@
   object-fit: contain;
   border: 1px solid #333;
 }
+
+
+.magic-loader {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.magic-loader span {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: #bbb;
+  clip-path: polygon(50% 0%,
+      65% 35%,
+      100% 50%,
+      65% 65%,
+      50% 100%,
+      35% 65%,
+      0% 50%,
+      35% 35%);
+  animation: sparkle 1.5s infinite ease-in-out;
+  opacity: 0;
+}
+
+/* positions */
+.magic-loader span:nth-child(1) {
+  top: 28px;
+  left: 28px;
+  animation-delay: 0s;
+}
+
+.magic-loader span:nth-child(2) {
+  top: 8px;
+  right: 10px;
+  width: 14px;
+  height: 14px;
+  animation-delay: .4s;
+}
+
+.magic-loader span:nth-child(3) {
+  bottom: 8px;
+  left: 12px;
+  width: 12px;
+  height: 12px;
+  animation-delay: .8s;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: scale(0.2) rotate(0deg);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1) rotate(180deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.2) rotate(360deg);
+    opacity: 0;
+  }
+}

@@ -33,21 +33,11 @@ fileInput.addEventListener("change", () => {
   if (file) loadFile(file);
 });
 
-// function setFile(file) {
-//   if (!file.type.startsWith("image/")) return;
 
-//   const dt = new DataTransfer();
-//   dt.items.add(file);
-//   fileInput.files = dt.files;
 
-//   const reader = new FileReader();
-//   reader.onload = () => {
-//     previewImage.src = reader.result;
-//     uploadContent.classList.add("d-none");
-//     previewContainer.classList.remove("d-none");
-//   };
-//   reader.readAsDataURL(file);
-// }
+/* ------------------------------
+   Working with CANVAS
+--------------------------------*/
 
 function loadFile(file) {
   if (!file.type.startsWith("image/")) return;
@@ -68,6 +58,8 @@ function loadFile(file) {
 }
 
 
+
+
 function loadImageToCanvas(src) {
   const img = new Image();
   img.crossOrigin = "anonymous";
@@ -83,7 +75,7 @@ function loadImageToCanvas(src) {
   };
 }
 
-
+// add canvas & image background 
 function redrawCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -99,6 +91,7 @@ function redrawCanvas() {
   }
 }
 
+// fit canvas with outer div 
 
 function fitCanvasInContainer() {
   const wrapper = document.getElementById("previewWrapper");
@@ -116,6 +109,7 @@ function fitCanvasInContainer() {
   canvas.style.height = canvas.height * scale + "px";
 }
 
+// auto resizeing based on input 
 
 function applyOutputSize(type) {
   if (!currentImage) return;
@@ -134,6 +128,8 @@ function applyOutputSize(type) {
   fitCanvasInContainer();
 }
 
+
+// downlaod image 
 
 const downloadBtn = document.getElementById('downloadBtn');
 downloadBtn.addEventListener("click", () => {
@@ -215,9 +211,7 @@ colorPicker.addEventListener('input', () => {
   radioBgType.forEach(radio => radio.checked = false)
   colorValue = colorPicker.value;
   bgColor = colorPicker.value;
-
   redrawCanvas()
-  
   bgType = "custom"
 
 })
@@ -225,23 +219,13 @@ colorPicker.addEventListener('input', () => {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const LoaderAnimation = document.getElementById('magic_loader')
+  LoaderAnimation.classList.remove("d-none");
 
   if (!fileInput.files.length) {
     alert("Please upload an image");
     return;
   }
-
-
-  previewContainer.style.border = "3px solid red";
-  previewContainers.style.backgroundColor = "#14e95ef5";
-  previewContainers.style.padding = "10px"; // optional visual spacing
-  console.log(previewContainers);
-
-  console.log('Outter Fun Radio Selected', selectedWidth, selectedHeight);
-  console.log('Outter Fun Color Selected', bgType, colorValue);
-  console.log("previewContainers - ")
-
-
 
 
   //  hide porcess btn and show success btns 
@@ -264,12 +248,15 @@ form.addEventListener("submit", async (e) => {
   // http://127.0.0.1:8000/upload/
   /* -------- SUBMIT -------- */
   try {
-    const res = await fetch("", {
+
+    const res = await fetch("http://127.0.0.1:8000/upload/", {
       method: "POST",
       body: formData
     });
 
+
     if (!res.ok) {
+      LoaderAnimation.classList.add("d-none");
       throw new Error(`Server error: ${res.status}`);
     }
 
@@ -279,9 +266,10 @@ form.addEventListener("submit", async (e) => {
 
     // If backend returns processed PNG URL
     if (result.image_url) {
+      LoaderAnimation.classList.add("d-none");
       console.log('- print url - ', result.image_url);
 
-      previewImage.src = result.image_url;
+      loadImageToCanvas(result.image_url);
       getProcessBtn.classList.add('d-none');
       getAfterProcessBtn.classList.remove('d-none')
 
