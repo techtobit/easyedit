@@ -69,8 +69,9 @@ async def create_upload_file(
         # 2. Convert file once
         img_to_btyes = await image_convertion(file)
 
-        result_img = None  # this will always be fed to upscaler
+        # result_img = None  # this will always be fed to upscaler
         tmp_files = []
+        upscaled_url = None
 
         is_custom_size = input_width > 0 and input_height > 0
         is_original_size = not is_custom_size
@@ -85,9 +86,10 @@ async def create_upload_file(
                 return {"error": "No face detected"}
             tmp = await temp_save(cropped_img)
             tmp_files.append(tmp)
-
             bg_removed = await remove_background(tmp)
-            result_img = bg_removed
+            upscaled_url = await upscale_image(bg_removed)
+            if not upscaled_url:
+                upscaled_url = bg_removed
             # working
 
         # --------------------------------------------------
@@ -96,6 +98,7 @@ async def create_upload_file(
         # --------------------------------------------------
         elif is_original_size and bgtype == "original":
             result_img = await cv_to_imagefile(img_to_btyes)
+            upscaled_url = await upscale_image(result_img)
             # working 
 
 
@@ -108,6 +111,9 @@ async def create_upload_file(
             if cropped_img is None:
                 return {"error": "No face detected"}
             result_img = await cv_to_imagefile(cropped_img)
+            upscaled_url = await upscale_image(result_img)
+            if not upscaled_url:
+                upscaled_url = result_img
             # working
 
         # --------------------------------------------------
@@ -118,13 +124,15 @@ async def create_upload_file(
             tmp = await temp_save(img_to_btyes)
             tmp_files.append(tmp)
             bg_removed = await remove_background(tmp)
-            result_img = bg_removed
+            upscaled_url = await upscale_image(bg_removed)
+            if not upscaled_url:
+                upscaled_url = bg_removed
             # working
 
         # --------------------------------------------------
         # FINAL: always upscale
         # --------------------------------------------------
-        upscaled_url = await upscale_image(result_img)
+        
 
         # Cleanup
         for file in tmp_files:
