@@ -188,7 +188,7 @@ radioBgType.forEach(radio => {
   radio.addEventListener('change', () => {
     if (!radio.checked) return;
     bgType = document.querySelector('input[name="bg_type"]:checked').id;
-    if(bgType == 'transparent'){
+    if (bgType == 'transparent') {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
     }
@@ -203,11 +203,16 @@ colorPicker.addEventListener('input', () => {
 
 })
 
-
+const LoaderAnimation = document.getElementById('magic_loader')
+const getProcessBtn = document.getElementById('process_btn');
+const getAfterProcessBtn = document.getElementById('success_btns');
+const processText = document.getElementById('process_text');
+let timer = null;
 let renamed_image_name = '';
+
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const LoaderAnimation = document.getElementById('magic_loader')
   LoaderAnimation.classList.remove("d-none");
 
   if (!fileInput.files.length) {
@@ -216,9 +221,22 @@ form.addEventListener("submit", async (e) => {
   }
 
 
-  //  hide porcess btn and show success btns 
-  const getProcessBtn = document.getElementById('process_btn')
-  const getAfterProcessBtn = document.getElementById('success_btns')
+  // ⏳ Countdown (max wait)
+  let seconds = 0;
+  processText.innerText = `Processing... ${seconds}s`;
+  timer = setInterval(() => {
+    seconds++;
+    processText.innerText = `Processing... ${seconds}s`;
+    //  hide porcess btn and show success btns 
+    getProcessBtn.classList.add('opacity-75');
+    getAfterProcessBtn.classList.add('opacity-75');
+    getProcessBtn.disabled = true;
+    getAfterProcessBtn.disabled = true;
+    // if (seconds >= 0) {
+    //   clearInterval(timer);
+    //   processText.innerText = "Still processing...";
+    // }
+  }, 1000);
 
   /* -------- FORM DATA -------- */
   const formData = new FormData();
@@ -228,12 +246,10 @@ form.addEventListener("submit", async (e) => {
   formData.append("bgtype", bgType);
 
   console.log(formData)
-  // Debug (remove later)
   for (let pair of formData.entries()) {
     console.log(pair[0], pair[1]);
   }
-  // http://127.0.0.1:8000/upload/
-  /* -------- SUBMIT -------- */
+
   try {
 
     const res = await fetch("/upload/", {
@@ -248,24 +264,24 @@ form.addEventListener("submit", async (e) => {
     }
 
     const result = await res.json();
-    console.log('print result - ', result);
+    loadImageToCanvas(result.image_url);
+    renamed_image_name = result.image_name;
+    clearInterval(timer);
+    processText.innerText = 'Process Image'
+    LoaderAnimation.classList.add("d-none");
+    getAfterProcessBtn.classList.remove('d-none')
+    getProcessBtn.classList.remove('opacity-75');
+    getAfterProcessBtn.classList.remove('opacity-75');
+    getProcessBtn.disabled = false;
+    getAfterProcessBtn.disabled = false;
 
-
-    // If backend returns processed PNG URL
-    if (result.image_url) {
-      LoaderAnimation.classList.add("d-none");
-      console.log('- print url - ', result.image_url);
-      renamed_image_name = result.image_name;
-
-      loadImageToCanvas(result.image_url);
-      getProcessBtn.classList.add('d-none');
-      getAfterProcessBtn.classList.remove('d-none')
-
-    }
 
     console.log("Upload success:", result);
 
   } catch (err) {
+    clearInterval(timer);
+    processText.innerText = 'Process Image'
+    getProcessBtn.disabled = false
     console.error("Upload failed:", err);
     alert("Upload failed. Check console & backend logs.");
   }
