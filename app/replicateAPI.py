@@ -13,6 +13,8 @@ client = replicate = Client(
 		# "bria/remove-background",
 		# $0.01 Test Point - 8
 		# "recraft-ai/recraft-remove-background",
+		# $0.00028 - Test Point - 6
+		# "lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1",
 
 		# $0.011 - Test Point - 5
 		# "smoretalk/rembg-enhance:c57bc7626c4b5eda6531ffb84657f5672932d0fad49120b94383ec93f7ad7ac6",
@@ -27,9 +29,8 @@ async def remove_background(image_path):
     file=open(image_path, "rb"),
 	)
 	remove_bg = replicate.run(
-		# $0.00028 - Test Point - 6
-		"lucataco/remove-bg:95fcc2a26d3899cd6c2691c900465aaeff466285a65c14638cc5f36f34befaf1",
-
+		# $0.01 Test Point - 8
+		"recraft-ai/recraft-remove-background",
 		input={
 			"image": uploaded.urls["get"],
 		}
