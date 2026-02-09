@@ -9,6 +9,8 @@ client = replicate = Client(
     api_token=os.getenv("REPLICATE_API_TOKEN")
 )
 
+		# $0.01 Test Point - 8
+		# "recraft-ai/recraft-remove-background",
 		# $0.018 - Test Point - 9
 		# "bria/remove-background",
 		# $0.01 Test Point - 8
@@ -29,8 +31,8 @@ async def remove_background(image_path):
     file=open(image_path, "rb"),
 	)
 	remove_bg = replicate.run(
-		# $0.01 Test Point - 8
-		"recraft-ai/recraft-remove-background",
+		# $0.018 - Test Point - 9
+		"bria/remove-background",
 		input={
 			"image": uploaded.urls["get"],
 		}
