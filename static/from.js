@@ -207,6 +207,8 @@ const LoaderAnimation = document.getElementById('magic_loader')
 const getProcessBtn = document.getElementById('process_btn');
 const getAfterProcessBtn = document.getElementById('success_btns');
 const processText = document.getElementById('process_text');
+const reload_btn = document.getElementById('reload_btn');
+const error_view = document.getElementById('error_view');
 let timer = null;
 let renamed_image_name = '';
 
@@ -224,6 +226,7 @@ form.addEventListener("submit", async (e) => {
   // ⏳ Countdown (max wait)
   let seconds = 0;
   processText.innerText = `Processing... ${seconds}s`;
+  reload_btn.classList.add('d-none');
   timer = setInterval(() => {
     seconds++;
     processText.innerText = `Processing... ${seconds}s`;
@@ -264,16 +267,18 @@ form.addEventListener("submit", async (e) => {
     }
 
     const result = await res.json();
-    loadImageToCanvas(result.image_url);
-    renamed_image_name = result.image_name;
     clearInterval(timer);
     processText.innerText = 'Process Image'
     LoaderAnimation.classList.add("d-none");
-    getAfterProcessBtn.classList.remove('d-none')
-    getProcessBtn.classList.remove('opacity-75');
-    getAfterProcessBtn.classList.remove('opacity-75');
-    getProcessBtn.disabled = false;
-    getAfterProcessBtn.disabled = false;
+    if (result.image_url !=null) {
+      loadImageToCanvas(result.image_url);
+      renamed_image_name = result.image_name;
+      getAfterProcessBtn.classList.remove('d-none')
+      getProcessBtn.classList.remove('opacity-75');
+      getAfterProcessBtn.classList.remove('opacity-75');
+      getProcessBtn.disabled = false;
+      getAfterProcessBtn.disabled = false;
+    }
 
 
     console.log("Upload success:", result);
@@ -282,8 +287,11 @@ form.addEventListener("submit", async (e) => {
     clearInterval(timer);
     processText.innerText = 'Process Image'
     getProcessBtn.disabled = false
+    getAfterProcessBtn.classList.add('d-none')
     console.error("Upload failed:", err);
-    alert("Upload failed. Check console & backend logs.");
+    LoaderAnimation.classList.add("d-none");
+    error_view.innerText=(`${err}`)
+    error_view.style.padding = '10px'
   }
 });
 
