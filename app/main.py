@@ -97,9 +97,8 @@ async def create_upload_file(
         # upscaler only
         # --------------------------------------------------
         elif is_original_size and bgtype == "original":
-            pass
-            # result_img = await cv_to_imagefile(img_to_btyes)
-            # upscaled_url = await upscale_image(result_img)
+            result_img = await cv_to_imagefile(img_to_btyes)
+            upscaled_url = await upscale_image(result_img)
             # working 
 
 

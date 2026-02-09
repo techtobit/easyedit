@@ -260,13 +260,12 @@ form.addEventListener("submit", async (e) => {
       body: formData
     });
 
-    const result = await res.json();
-    if (!res.ok || result.image_url == null) {
+    if (!res.ok) {
       LoaderAnimation.classList.add("d-none");
       throw new Error(`Server error: ${res.status}`);
     }
-
-
+    
+    const result = await res.json();
     clearInterval(timer);
     processText.innerText = 'Process Image'
     LoaderAnimation.classList.add("d-none");
